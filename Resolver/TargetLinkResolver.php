@@ -12,7 +12,7 @@ use Bankiru\Seo\SourceInterface;
 
 final class TargetLinkResolver implements LinkResolver
 {
-    /** @var CartesianDestinationGenerator */
+    /** @var DestinationGenerator */
     private $generator;
     /** @var  SourceRegistry */
     private $registry;
