@@ -2,16 +2,16 @@
 
 namespace Bankiru\Seo;
 
-use Bankiru\Seo\Exception\ProcessingException;
+use Bankiru\Seo\Exception\MatchingException;
 use Bankiru\Seo\Page\SeoPageInterface;
 
-interface ProcessorInterface
+interface DestinationMatcherInterface
 {
     /**
      * @param DestinationInterface $destination
      *
      * @return SeoPageInterface
-     * @throws ProcessingException
+     * @throws MatchingException
      */
-    public function process(DestinationInterface $destination);
+    public function match(DestinationInterface $destination);
 }

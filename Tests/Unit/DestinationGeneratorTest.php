@@ -1,6 +1,6 @@
 <?php
 
-namespace Bankiru\Seo\Tests;
+namespace Bankiru\Seo\Tests\Unit;
 
 use Bankiru\Seo\Destination\CartesianDestinationGenerator;
 use Bankiru\Seo\Exception\DestinationException;

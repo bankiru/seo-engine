@@ -1,7 +1,4 @@
 services:
-  bankiru.seo.matcher:
-    alias: bankiru.seo.info
-
   bankiru.seo.source_registry:
     class: Bankiru\Seo\Resolver\SourceRegistry
 
@@ -17,10 +14,18 @@ services:
     class: Bankiru\Seo\Destination\DestinationCompiler
     synthetic: true
 
-  bankiru.seo.processor:
-    class: Bankiru\Seo\Processor
+  bankiru.seo.target_sorter:
+    alias: bankiru.seo.matching_score_target_sorter
+
+  bankiru.seo.matching_score_target_sorter:
+    class: Bankiru\Seo\Target\MatchScoreTargetSorter
     arguments:
     - "@bankiru.seo.target_repository"
+
+  bankiru.seo.matcher:
+    class: Bankiru\Seo\DestinationMatcher
+    arguments:
+    - "@bankiru.seo.target_sorter"
     - "@bankiru.seo.page_repository"
 
   bankiru.seo.link_generator:
@@ -58,3 +63,9 @@ services:
     - "@bankiru.seo.destinaction_compiler"
     tags:
     - name: seo_link_resolver
+
+  bankiru.seo.master_seo_request:
+    class: Bankiru\Seo\Listener\MasterSeoRequest
+    arguments:
+    - "@bankiru.seo.matcher"
+

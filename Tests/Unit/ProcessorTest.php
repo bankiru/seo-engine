@@ -1,15 +1,16 @@
 <?php
 
-namespace Bankiru\Seo\Tests;
+namespace Bankiru\Seo\Tests\Unit;
 
 use Bankiru\Seo\Destination;
 use Bankiru\Seo\DestinationInterface;
+use Bankiru\Seo\DestinationMatcher;
 use Bankiru\Seo\Entity\TargetDefinition;
-use Bankiru\Seo\Exception\ProcessingException;
+use Bankiru\Seo\Exception\MatchingException;
 use Bankiru\Seo\Integration\Local\ExactCondition;
 use Bankiru\Seo\Page\SeoPageBuilder;
 use Bankiru\Seo\PageRepositoryInterface;
-use Bankiru\Seo\Processor;
+use Bankiru\Seo\Target\MatchScoreTargetSorter;
 use Bankiru\Seo\TargetDefinitionInterface;
 use Bankiru\Seo\TargetRepositoryInterface;
 use Prophecy\Argument;
@@ -70,17 +71,17 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($page);
         $pageRepository = $pageRepository->reveal();
 
-        $processor = new Processor($targetRepository, $pageRepository);
+        $processor = new DestinationMatcher(new MatchScoreTargetSorter($targetRepository), $pageRepository);
 
         $destination = new Destination($route, $items);
 
         try {
-            $seoPage = $processor->process($destination);
+            $seoPage = $processor->match($destination);
             if (!$match) {
                 self::fail('Should not match');
             }
             self::assertEquals($page, $seoPage);
-        } catch (ProcessingException $exception) {
+        } catch (MatchingException $exception) {
             if ($match) {
                 throw $exception;
             }
