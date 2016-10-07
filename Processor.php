@@ -2,14 +2,20 @@
 
 namespace Bankiru\Seo;
 
+use Bankiru\Seo\Exception\PageException;
+use Bankiru\Seo\Exception\ProcessingException;
+
 final class Processor implements ProcessorInterface
 {
     /** @var TargetRepositoryInterface */
-    private $repository;
+    private $targetRepository;
+    /** @var PageRepositoryInterface */
+    private $pageRepository;
 
-    public function __construct(TargetRepositoryInterface $repository)
+    public function __construct(TargetRepositoryInterface $targetRepository, PageRepositoryInterface $pageRepository)
     {
-        $this->repository = $repository;
+        $this->targetRepository = $targetRepository;
+        $this->pageRepository   = $pageRepository;
     }
 
     /** {@inheritdoc} */
@@ -17,10 +23,14 @@ final class Processor implements ProcessorInterface
     {
         $target = $this->getTarget($destination);
         if (null === $target) {
-            return null;
+            throw ProcessingException::targetNotFound();
         }
 
-        return $target->getSeoPage();
+        try {
+            return $this->pageRepository->getByTargetDestination($target, $destination);
+        } catch (PageException $exception) {
+            throw new ProcessingException($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
     /**
@@ -32,7 +42,7 @@ final class Processor implements ProcessorInterface
     {
         $result = null;
         $i      = -100;
-        foreach ($this->repository->findByRoute($destination->getRoute()) as $target) {
+        foreach ($this->targetRepository->findByRoute($destination->getRoute()) as $target) {
             $score = $target->match($destination);
             if ($score > $i) {
                 $result = $target;

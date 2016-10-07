@@ -2,12 +2,11 @@
 
 namespace Bankiru\Seo\Generator;
 
-use Bankiru\Seo\BankiruSeoBridge\SeoFilterFactoryInterface;
 use Bankiru\Seo\Destination;
 use Bankiru\Seo\DestinationInterface;
 use Bankiru\Seo\Exception\DestinationException;
-use Bankiru\Seo\SourceInterface;
 use Bankiru\Seo\SourceFiller;
+use Bankiru\Seo\SourceInterface;
 
 final class DestinationGenerator
 {
@@ -95,9 +94,9 @@ final class DestinationGenerator
     }
 
     /**
-     * @param SourceFiller                $filler
-     * @param SeoFilterFactoryInterface[] $fillers
-     * @param string[]                    $visited
+     * @param SourceFiller   $filler
+     * @param SourceFiller[] $fillers
+     * @param string[]       $visited
      *
      * @throws DestinationException
      */
@@ -118,8 +117,8 @@ final class DestinationGenerator
     }
 
     /**
-     * @param array[]                     $items
-     * @param SeoFilterFactoryInterface[] $fillers
+     * @param array[]        $items
+     * @param SourceFiller[] $fillers
      *
      * @return array
      * @throws DestinationException

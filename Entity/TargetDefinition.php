@@ -2,31 +2,30 @@
 
 namespace Bankiru\Seo\Entity;
 
-use Bankiru\Seo\DestinationInterface;
-use Bankiru\Seo\Page\SeoPageInterface;
-use Bankiru\Seo\SourceInterface;
 use Bankiru\Seo\ConditionInterface;
+use Bankiru\Seo\DestinationInterface;
+use Bankiru\Seo\SourceInterface;
 use Bankiru\Seo\TargetDefinitionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-abstract class AbstractTargetDefinition implements TargetDefinitionInterface
+class TargetDefinition implements TargetDefinitionInterface
 {
     /**
      * @var Collection|ConditionInterface[]
      */
     protected $conditions;
+    /** @var  string */
+    protected $route;
 
     /**
-     * @var SeoPageInterface
+     * TargetDefinition constructor.
+     *
+     * @param string $route
      */
-    protected $page;
-
-    /**
-     * AbstractTargetDefinition constructor.
-     */
-    public function __construct()
+    public function __construct($route)
     {
+        $this->route      = $route;
         $this->conditions = new ArrayCollection();
     }
 
@@ -80,12 +79,6 @@ abstract class AbstractTargetDefinition implements TargetDefinitionInterface
         return new PermissiveCondition();
     }
 
-    /** {@inheritdoc} */
-    public function getSeoPage()
-    {
-        return $this->page;
-    }
-
     /**
      * @param SourceInterface[] $sources
      *
@@ -93,7 +86,7 @@ abstract class AbstractTargetDefinition implements TargetDefinitionInterface
      */
     public function count(array $sources)
     {
-        $count       = 1;
+        $count         = 1;
         $uniqueSources = [];
         foreach ($sources as $code => $source) {
             $source->withCondition($this->getCondition($code));
@@ -107,11 +100,9 @@ abstract class AbstractTargetDefinition implements TargetDefinitionInterface
         return $count;
     }
 
-    /**
-     * @param SeoPageInterface|null $page
-     */
-    public function setPage(SeoPageInterface $page = null)
+    /** {@inheritdoc} */
+    public function getRoute()
     {
-        $this->page = $page;
+        return $this->route;
     }
 }

@@ -38,11 +38,4 @@ interface TargetDefinitionInterface
      * @return string
      */
     public function getRoute();
-
-    /**
-     * Returns page data relevant to this target
-     *
-     * @return SeoPageInterface
-     */
-    public function getSeoPage();
 }

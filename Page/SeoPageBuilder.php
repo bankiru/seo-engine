@@ -47,6 +47,6 @@ class SeoPageBuilder extends SeoPage implements PageBuilder
     /** {@inheritdoc} */
     public function getSeoPage()
     {
-        return $this;
+        return clone $this;
     }
 }

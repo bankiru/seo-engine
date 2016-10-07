@@ -2,6 +2,7 @@
 
 namespace Bankiru\Seo;
 
+use Bankiru\Seo\Exception\ProcessingException;
 use Bankiru\Seo\Page\SeoPageInterface;
 
 interface ProcessorInterface
@@ -9,7 +10,8 @@ interface ProcessorInterface
     /**
      * @param DestinationInterface $destination
      *
-     * @return null|SeoPageInterface
+     * @return SeoPageInterface
+     * @throws ProcessingException
      */
     public function process(DestinationInterface $destination);
 }
