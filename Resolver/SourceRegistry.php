@@ -1,6 +1,6 @@
 <?php
 
-namespace Bankiru\Seo\Generator;
+namespace Bankiru\Seo\Resolver;
 
 use Bankiru\Seo\SourceInterface;
 

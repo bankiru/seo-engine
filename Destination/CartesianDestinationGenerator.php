@@ -1,23 +1,15 @@
 <?php
 
-namespace Bankiru\Seo\Generator;
+namespace Bankiru\Seo\Destination;
 
 use Bankiru\Seo\Destination;
-use Bankiru\Seo\DestinationInterface;
 use Bankiru\Seo\Exception\DestinationException;
 use Bankiru\Seo\SourceFiller;
 use Bankiru\Seo\SourceInterface;
 
-final class DestinationGenerator
+final class CartesianDestinationGenerator implements DestinationGenerator
 {
-    /**
-     * @param string            $route
-     * @param SourceInterface[] $sources
-     * @param SourceFiller[]    $fillers
-     *
-     * @return DestinationInterface[]
-     * @throws DestinationException
-     */
+    /** {@inheritdoc} */
     public function generate($route, array $sources, array $fillers = [])
     {
         $itemsCollection = $this->cartesian($sources);
@@ -34,11 +26,7 @@ final class DestinationGenerator
         );
     }
 
-    /**
-     * @param \Countable[] $sources
-     *
-     * @return int|null
-     */
+    /** {@inheritdoc} */
     public function count(array $sources)
     {
         if (count($sources) === 0) {
@@ -83,7 +71,7 @@ final class DestinationGenerator
     /**
      * @param SourceFiller[] $fillers
      *
-     * @throws \RuntimeException
+     * @throws DestinationException
      */
     private function validateFillerCircularity(array $fillers)
     {

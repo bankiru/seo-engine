@@ -1,8 +1,10 @@
 <?php
 
-namespace Bankiru\Seo\Generator;
+namespace Bankiru\Seo\Resolver;
 
+use Bankiru\Seo\Destination\CartesianDestinationGenerator;
 use Bankiru\Seo\Destination\DestinationCompiler;
+use Bankiru\Seo\Destination\DestinationGenerator;
 use Bankiru\Seo\Entity\TargetLinkInterface;
 use Bankiru\Seo\Exception\DestinationException;
 use Bankiru\Seo\Exception\LinkResolutionException;
@@ -10,7 +12,7 @@ use Bankiru\Seo\SourceInterface;
 
 final class TargetLinkResolver implements LinkResolver
 {
-    /** @var DestinationGenerator */
+    /** @var CartesianDestinationGenerator */
     private $generator;
     /** @var  SourceRegistry */
     private $registry;
@@ -20,14 +22,18 @@ final class TargetLinkResolver implements LinkResolver
     /**
      * TargetLinkResolver constructor.
      *
-     * @param SourceRegistry      $registry
-     * @param DestinationCompiler $compiler
+     * @param SourceRegistry       $registry
+     * @param DestinationCompiler  $compiler
+     * @param DestinationGenerator $generator
      */
-    public function __construct(SourceRegistry $registry, DestinationCompiler $compiler)
-    {
+    public function __construct(
+        SourceRegistry $registry,
+        DestinationCompiler $compiler,
+        DestinationGenerator $generator = null
+    ) {
         $this->registry  = $registry;
         $this->compiler  = $compiler;
-        $this->generator = new DestinationGenerator();
+        $this->generator = $generator ?: new CartesianDestinationGenerator();
     }
 
     /** {@inheritdoc} */

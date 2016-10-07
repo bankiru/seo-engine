@@ -3,10 +3,14 @@ services:
     alias: bankiru.seo.info
 
   bankiru.seo.source_registry:
-    class: Bankiru\Seo\Generator\SourceRegistry
+    class: Bankiru\Seo\Resolver\SourceRegistry
 
   bankiru.seo.target_repository:
     class: Bankiru\Seo\TargetRepositoryInterface
+    synthetic: true
+
+  bankiru.seo.page_repository:
+    class: Bankiru\Seo\PageRepositoryInterface
     synthetic: true
 
   bankiru.seo.destinaction_compiler:
@@ -17,9 +21,10 @@ services:
     class: Bankiru\Seo\Processor
     arguments:
     - "@bankiru.seo.target_repository"
+    - "@bankiru.seo.page_repository"
 
   bankiru.seo.link_generator:
-    class: Bankiru\Seo\Generator\ContainerLinkResolver
+    class: Bankiru\Seo\Resolver\ContainerLinkResolver
 
   bankiru.seo.slug.sluggable_normalizer:
     class: Bankiru\Seo\Destination\Normalizer\SluggableNormalizer
@@ -42,14 +47,14 @@ services:
     - []
 
   bankiru.seo.static_link_resolver:
-    class: Bankiru\Seo\Generator\StaticLinkResolver
+    class: Bankiru\Seo\Resolver\StaticLinkResolver
     tags:
     - name: seo_link_resolver
 
   bankiru.seo.target_link_resolver:
-    class: Bankiru\Seo\Generator\TargetLinkResolver
+    class: Bankiru\Seo\Resolver\TargetLinkResolver
     arguments:
     - "@bankiru.seo.source_registry"
-    - "@bankiru.seo.seo_route_compiller"
+    - "@bankiru.seo.destinaction_compiler"
     tags:
     - name: seo_link_resolver

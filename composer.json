@@ -27,9 +27,12 @@
     "symfony/http-kernel": "~2.7 || ~3.0",
     "symfony/dependency-injection": "~2.7 || ~3.0",
     "symfony/routing": "~2.7 || ~3.0",
-    "phpunit/phpunit": "~4.8 || ~5.0"
+    "symfony/config": "~2.7 || ~3.0",
+    "phpunit/phpunit": "~4.8 || ~5.0",
+    "twig/twig": "~1.20"
   },
   "suggest": {
-    "symfony/symfony": "To use as a bundle"
+    "symfony/symfony": "To use as a bundle",
+    "twig/twig": "To render links twig templates"
   }
 }

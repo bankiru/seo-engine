@@ -23,11 +23,12 @@ abstract class AbstractCompiler implements DestinationCompiler
      * AbstractCompiler constructor.
      *
      * @param DestinationNormalizer $normalizer
+     * @param \Twig_Environment     $twig
      */
-    public function __construct(DestinationNormalizer $normalizer)
+    public function __construct(DestinationNormalizer $normalizer, \Twig_Environment $twig = null)
     {
         $this->extractor  = new ContextExtractor();
-        $this->twig       = new \Twig_Environment(new \Twig_Loader_Array([]));
+        $this->twig       = $twig ?: new \Twig_Environment(new \Twig_Loader_Array([]));
         $this->normalizer = $normalizer;
     }
 
