@@ -1,0 +1,55 @@
+services:
+  bankiru.seo.matcher:
+    alias: bankiru.seo.info
+
+  bankiru.seo.source_registry:
+    class: Bankiru\Seo\Generator\SourceRegistry
+
+  bankiru.seo.target_repository:
+    class: Bankiru\Seo\TargetRepositoryInterface
+    synthetic: true
+
+  bankiru.seo.destinaction_compiler:
+    class: Bankiru\Seo\Destination\DestinationCompiler
+    synthetic: true
+
+  bankiru.seo.processor:
+    class: Bankiru\Seo\Processor
+    arguments:
+    - "@bankiru.seo.target_repository"
+
+  bankiru.seo.link_generator:
+    class: Bankiru\Seo\Generator\ContainerLinkResolver
+
+  bankiru.seo.slug.sluggable_normalizer:
+    class: Bankiru\Seo\Destination\Normalizer\SluggableNormalizer
+    tags:
+    - { name: seo_slug_normalizer }
+
+  bankiru.seo.slug.stringify_normalizer:
+    class: Bankiru\Seo\Destination\Normalizer\StringifyNormalizer
+    tags:
+    - { name: seo_slug_normalizer, priority: 255 }
+
+  bankiru.seo.slug.scalar_normalizer:
+    class: Bankiru\Seo\Destination\Normalizer\ScalarNormalizer
+    tags:
+    - { name: seo_slug_normalizer, priority: -255 }
+
+  bankiru.seo.slug.delegated_normalizer:
+    class: Bankiru\Seo\Destination\Normalizer\DelegatingNormalizer
+    arguments:
+    - []
+
+  bankiru.seo.static_link_resolver:
+    class: Bankiru\Seo\Generator\StaticLinkResolver
+    tags:
+    - name: seo_link_resolver
+
+  bankiru.seo.target_link_resolver:
+    class: Bankiru\Seo\Generator\TargetLinkResolver
+    arguments:
+    - "@bankiru.seo.source_registry"
+    - "@bankiru.seo.seo_route_compiller"
+    tags:
+    - name: seo_link_resolver
