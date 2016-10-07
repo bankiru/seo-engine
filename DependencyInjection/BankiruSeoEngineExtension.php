@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
-final class BankiruSeoExtension extends Extension
+final class BankiruSeoEngineExtension extends Extension
 {
     /** {@inheritdoc} */
     public function load(array $configs, ContainerBuilder $container)
