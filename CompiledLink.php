@@ -20,7 +20,7 @@ final class CompiledLink implements LinkInterface
      *
      * @param string    $href
      * @param string    $title
-     * @param \string[] $attributes
+     * @param string[] $attributes
      */
     public function __construct($href, $title = null, array $attributes = [])
     {
