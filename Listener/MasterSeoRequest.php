@@ -28,7 +28,7 @@ final class MasterSeoRequest
 
 
     /**
-     * @return DestinationInterface|null
+     * @return DestinationInterface
      * @throws \LogicException
      */
     public function getDestination()
