@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
@@ -36,12 +35,9 @@ final class SeoKernel extends Kernel
         return __DIR__.'/../../build/logs';
     }
 
-    public function eventAction(Request $request)
+    public function eventAction(SeoPageInterface $_seo_page = null)
     {
-        /** @var SeoPageInterface $page */
-        $page = $request->attributes->get('_seo_page');
-
-        return new Response($page ? $page->getTitle() : 'not_found');
+        return new Response($_seo_page ? $_seo_page->getTitle() : 'not_found');
     }
 
     /**
@@ -58,8 +54,7 @@ final class SeoKernel extends Kernel
         $seoRoute->setOption('seo', true);
         $seoRoute = $routes->add('/test/no_match', 'kernel:eventAction', 'event_controller_no_match');
         $seoRoute->setOption('seo', true);
-        $seoRoute = $routes->add('/test/no_seo', 'kernel:eventAction', 'event_controller_no_seo');
-        $seoRoute->setOption('seo', true);
+        $routes->add('/test/no_seo', 'kernel:eventAction', 'event_controller_no_seo');
     }
 
     /** {@inheritdoc} */

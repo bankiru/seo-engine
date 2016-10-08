@@ -38,5 +38,7 @@ class ContainerTest extends KernelTestCase
 
         $matcher = $container->get('bankiru.seo.matcher');
         self::assertSame($page, $matcher->match($destination));
+
+        self::assertTrue($container->has('bankiru.seo.request_listener'));
     }
 }

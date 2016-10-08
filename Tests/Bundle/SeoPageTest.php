@@ -8,8 +8,9 @@ use Bankiru\Seo\Integration\Local\StaticPageRepository;
 use Bankiru\Seo\Integration\Local\StaticTargetRepository;
 use Bankiru\Seo\Page\SeoPageBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-abstract class SeoPageTest extends WebTestCase
+class SeoPageTest extends WebTestCase
 {
     protected static function getKernelClass()
     {
@@ -20,8 +21,8 @@ abstract class SeoPageTest extends WebTestCase
     {
         return [
             'event match'    => ['event_controller_match', 'test/match', 'Title'],
-            'event no match' => ['event_controller_no_match', 'test/no_match', false],
-            'event no seo'   => ['event_controller_no_seo', 'test/no_seo', 'not_found'],
+            'event no match' => ['event_controller_match', 'test/no_match', false],
+            'event no seo'   => ['event_controller_match', 'test/no_seo', 'not_found'],
         ];
     }
 
@@ -34,6 +35,7 @@ abstract class SeoPageTest extends WebTestCase
      */
     public function testControllerEvents($route, $path, $response)
     {
+        $client    = static::createClient();
         $container = static::$kernel->getContainer();
 
         $target = new TargetDefinition($route);
@@ -47,18 +49,16 @@ abstract class SeoPageTest extends WebTestCase
         $targetRepo->add($target);
         $pageRepo->add($target, $page);
 
-        $client = static::createClient();
-
         try {
             $client->request('GET', $path);
             $serverResponse = $client->getResponse()->getContent();
 
             if (false === $response) {
-                self::fail('Should fail with match exception. '.$serverResponse);
+                self::fail(sprintf('Should fail with match exception. Received "%s"', $serverResponse));
             }
 
             self::assertSame($response, $serverResponse);
-        } catch (MatchingException $exception) {
+        } catch (NotFoundHttpException $exception) {
             if (false !== $response) {
                 throw $exception;
             }

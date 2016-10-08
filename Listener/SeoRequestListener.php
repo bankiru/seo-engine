@@ -44,7 +44,7 @@ final class SeoRequestListener
 
         $request = $event->getRequest();
 
-        $name  = $request->attributes->get('route');
+        $name  = $request->attributes->get('_route');
         $route = $this->router->getRouteCollection()->get($name);
         if (!$route) {
             return;

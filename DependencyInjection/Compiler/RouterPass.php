@@ -16,7 +16,7 @@ final class RouterPass implements CompilerPassInterface
             return;
         }
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../../Resources/config'));
         $loader->load('router.yml');
     }
 }
