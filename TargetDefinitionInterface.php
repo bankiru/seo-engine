@@ -2,12 +2,11 @@
 
 namespace Bankiru\Seo;
 
-use Bankiru\Seo\Page\SeoPageInterface;
-
 interface TargetDefinitionInterface
 {
     /**
-     * Checks whether the destination matches this target space definition. Returns the match weight if match, null otherwise
+     * Checks whether the destination matches this target space definition. Returns the match weight if match, null
+     * otherwise
      *
      * @param  DestinationInterface $destination
      *
