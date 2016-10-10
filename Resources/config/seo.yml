@@ -10,9 +10,15 @@ services:
     class: Bankiru\Seo\PageRepositoryInterface
     synthetic: true
 
-  bankiru.seo.destinaction_compiler:
-    class: Bankiru\Seo\Destination\DestinationCompiler
-    synthetic: true
+  bankiru.seo.destination_compiler:
+    alias: bankiru.seo.destination_compiler.symfony_routing
+
+  bankiru.seo.destination_compiler.symfony_routing:
+    class: Bankiru\Seo\Destination\Compiler\SymfonyRouterCompiler
+    arguments:
+    - "@bankiru.seo.slug.delegated_normalizer"
+    - "@?twig"
+    - "@router"
 
   bankiru.seo.target_sorter:
     alias: bankiru.seo.matching_score_target_sorter
@@ -60,7 +66,7 @@ services:
     class: Bankiru\Seo\Resolver\TargetLinkResolver
     arguments:
     - "@bankiru.seo.source_registry"
-    - "@bankiru.seo.destinaction_compiler"
+    - "@bankiru.seo.destination_compiler"
     tags:
     - name: seo_link_resolver
 
