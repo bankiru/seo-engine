@@ -3,21 +3,19 @@
 namespace Bankiru\Seo\Tests\Unit;
 
 use Bankiru\Seo\Destination;
-use Bankiru\Seo\DestinationInterface;
 use Bankiru\Seo\DestinationMatcher;
 use Bankiru\Seo\Entity\TargetDefinition;
 use Bankiru\Seo\Exception\MatchingException;
 use Bankiru\Seo\Integration\Local\ExactCondition;
+use Bankiru\Seo\Integration\Local\StaticPageRepository;
+use Bankiru\Seo\Integration\Local\StaticTargetRepository;
 use Bankiru\Seo\Page\SeoPageBuilder;
 use Bankiru\Seo\Page\SeoPageInterface;
-use Bankiru\Seo\PageRepositoryInterface;
 use Bankiru\Seo\Target\MatchScoreTargetSorter;
-use Bankiru\Seo\TargetDefinitionInterface;
-use Bankiru\Seo\TargetRepositoryInterface;
-use Prophecy\Argument;
 
 class MatcherTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var  StaticTargetRepository */
     private $targetRepo;
 
     public function getItems()
@@ -45,6 +43,16 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function getItemsForNoPage()
+    {
+        $route = 'any_random_route_id';
+
+        return [
+            'exact match' => [$route, [new TargetDefinition($route)], ['arg1' => '1', 'arg2' => 2]],
+        ];
+    }
+
+
     /**
      * @dataProvider getItems
      *
@@ -60,7 +68,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
             ->setTitle('Test Page')
             ->getSeoPage();
 
-        $processor = $this->createProcessor($route, $targets, $page);
+        $processor = $this->createProcessor($targets, $page);
 
         $destination = new Destination($route, $items);
 
@@ -88,38 +96,57 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $page         = (new SeoPageBuilder())
             ->setTitle('Test Page')
             ->getSeoPage();
-        $invalidRoute = $route . '_invalid';
+        $invalidRoute = $route.'_invalid';
 
-        $processor = $this->createProcessor($route, [$d1], $page);
-
-        $this->targetRepo->findByRoute(Argument::exact($invalidRoute))->willReturn([]);
-
+        $processor   = $this->createProcessor([$d1], $page);
         $destination = new Destination($invalidRoute, ['arg1' => 2, 'arg2' => 2]);
-
+        
         $processor->match($destination);
     }
 
     /**
-     * @param string           $route
-     * @param array            $targets
-     * @param SeoPageInterface $page
+     * @dataProvider getItemsForNoPage
+     *
+     * @param string $route
+     * @param array  $targets
+     * @param array  $items
+     *
+     * @internal     param $route
+     */
+    public function testNoPageFound($route, array $targets, array $items)
+    {
+        $processor = $this->createProcessor($targets);
+
+        $destination = new Destination($route, $items);
+
+        try {
+            $page = $processor->match($destination);
+            self::assertNotNull($page);
+            self::fail('Page should be missing');
+        } catch (MatchingException $exception) {
+        }
+    }
+
+    /**
+     * @param TargetDefinition[] $targets
+     * @param SeoPageInterface   $page
      *
      * @return DestinationMatcher
      */
-    private function createProcessor($route, array $targets, $page)
+    private function createProcessor(array $targets, $page = null)
     {
-        $this->targetRepo = $targetRepository = $this->prophesize(TargetRepositoryInterface::class);
-        $targetRepository->findByRoute(Argument::exact($route))->willReturn($targets);
-        $targetRepository = $targetRepository->reveal();
+        $this->targetRepo = $targetRepository = new StaticTargetRepository();
+        foreach ($targets as $target) {
+            $targetRepository->add($target);
+        }
 
-        $pageRepository = $this->prophesize(PageRepositoryInterface::class);
-        $pageRepository
-            ->getByTargetDestination(
-                Argument::type(TargetDefinitionInterface::class),
-                Argument::type(DestinationInterface::class)
-            )
-            ->willReturn($page);
-        $pageRepository = $pageRepository->reveal();
+
+        $pageRepository = new StaticPageRepository();
+        if ($page) {
+            foreach ($targets as $target) {
+                $pageRepository->add($target, $page);
+            }
+        }
 
         $processor = new DestinationMatcher(new MatchScoreTargetSorter($targetRepository), $pageRepository);
 
