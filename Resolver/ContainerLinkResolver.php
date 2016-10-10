@@ -3,7 +3,6 @@
 namespace Bankiru\Seo\Resolver;
 
 use Bankiru\Seo\Entity\ContainerLinkInterface;
-use Bankiru\Seo\Exception\LinkGeneratorException;
 use Bankiru\Seo\Exception\LinkResolutionException;
 
 final class ContainerLinkResolver implements LinkResolver
@@ -18,7 +17,7 @@ final class ContainerLinkResolver implements LinkResolver
      */
     public function __construct(array $resolvers = [])
     {
-        $this->resolvers = $resolvers;
+        $this->resolvers   = $resolvers;
         $this->resolvers[] = $this;
     }
 
@@ -53,7 +52,7 @@ final class ContainerLinkResolver implements LinkResolver
      * @param $link
      *
      * @return LinkResolver
-     * @throws LinkGeneratorException
+     * @throws LinkResolutionException
      */
     private function matchResolver($link)
     {
@@ -62,6 +61,6 @@ final class ContainerLinkResolver implements LinkResolver
                 return $resolver;
             }
         }
-        throw new LinkGeneratorException('Cannot find link resolver for link: ' . get_class($link));
+        throw new LinkResolutionException('Cannot find link resolver for link: '.get_class($link));
     }
 }
