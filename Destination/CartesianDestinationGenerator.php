@@ -134,7 +134,7 @@ final class CartesianDestinationGenerator implements DestinationGenerator
     private function inferCode(array $item, $code, array $fillers)
     {
         if (!array_key_exists($code, $fillers)) {
-            DestinationException::inferenceFailed($code, $item, $fillers);
+            throw DestinationException::inferenceFailed($code, $item, $fillers);
         }
 
         $filler = $fillers[$code];

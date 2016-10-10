@@ -33,6 +33,27 @@ class DestinationGeneratorTest extends \PHPUnit_Framework_TestCase
         self::fail('Circular dependency was not detected');
     }
 
+    public function testGeneratorMissingDependencyException()
+    {
+        $generator = new CartesianDestinationGenerator();
+        try {
+            $generator->generate(
+                'random_route_id',
+                [
+                    'source_arg' => new CollectionSource(new ArrayCollection([1, 2, 3])),
+                ],
+                [
+                    'filler_1' => $this->createCloneFiller(['source_arg']),
+                    'filler_2' => $this->createCloneFiller(['source_arg_2']),
+                ]
+            );
+        } catch (DestinationException $exception) {
+            return;
+        }
+
+        self::fail('Dependency miss was not detected');
+    }
+
     public function testGeneratorInference()
     {
         $route     = 'random_route_id';
@@ -51,6 +72,11 @@ class DestinationGeneratorTest extends \PHPUnit_Framework_TestCase
             self::assertNotNull($destination->resolve('filler_1'));
             self::assertSame($destination->resolve('source_arg'), $destination->resolve('filler_1'));
         }
+
+        self::assertEquals(
+            3,
+            $generator->count(['source_arg' => new CollectionSource(new ArrayCollection([1, 2, 3]))])
+        );
     }
 
     public function testCartesianTransform()
