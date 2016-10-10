@@ -28,7 +28,7 @@ interface PageBuilder
      *
      * @return $this
      */
-    public function setCanonical($canonical = null);
+    public function setCanonicalLink($canonical = null);
 
     /**
      * @param string[] $htmlAttributes
@@ -43,4 +43,9 @@ interface PageBuilder
      * @return $this
      */
     public function setBreadcrumbs(array $breadcrumbs);
+
+    /**
+     * @return static
+     */
+    public static function create();
 }

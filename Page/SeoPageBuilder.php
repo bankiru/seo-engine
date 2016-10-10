@@ -21,7 +21,7 @@ class SeoPageBuilder extends SeoPage implements PageBuilder
     }
 
     /** {@inheritdoc} */
-    public function setCanonical($canonical = null)
+    public function setCanonicalLink($canonical = null)
     {
         $this->canonical = $canonical;
 
@@ -48,5 +48,11 @@ class SeoPageBuilder extends SeoPage implements PageBuilder
     public function getSeoPage()
     {
         return clone $this;
+    }
+
+    /** {@inheritdoc} */
+    public static function create()
+    {
+        return new static();
     }
 }
