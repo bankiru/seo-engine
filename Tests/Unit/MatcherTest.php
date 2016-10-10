@@ -9,14 +9,17 @@ use Bankiru\Seo\Entity\TargetDefinition;
 use Bankiru\Seo\Exception\MatchingException;
 use Bankiru\Seo\Integration\Local\ExactCondition;
 use Bankiru\Seo\Page\SeoPageBuilder;
+use Bankiru\Seo\Page\SeoPageInterface;
 use Bankiru\Seo\PageRepositoryInterface;
 use Bankiru\Seo\Target\MatchScoreTargetSorter;
 use Bankiru\Seo\TargetDefinitionInterface;
 use Bankiru\Seo\TargetRepositoryInterface;
 use Prophecy\Argument;
 
-class ProcessorTest extends \PHPUnit_Framework_TestCase
+class MatcherTest extends \PHPUnit_Framework_TestCase
 {
+    private $targetRepo;
+
     public function getItems()
     {
         $route = 'any_random_route_id';
@@ -51,27 +54,13 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
      *
      * @internal     param $route
      */
-    public function testProcessing($route, array $targets, array $items, $match)
+    public function testMatching($route, array $targets, array $items, $match)
     {
-
         $page = (new SeoPageBuilder())
             ->setTitle('Test Page')
             ->getSeoPage();
 
-        $targetRepository = $this->prophesize(TargetRepositoryInterface::class);
-        $targetRepository->findByRoute(Argument::exact($route))->willReturn($targets);
-        $targetRepository = $targetRepository->reveal();
-
-        $pageRepository = $this->prophesize(PageRepositoryInterface::class);
-        $pageRepository
-            ->getByTargetDestination(
-                Argument::type(TargetDefinitionInterface::class),
-                Argument::type(DestinationInterface::class)
-            )
-            ->willReturn($page);
-        $pageRepository = $pageRepository->reveal();
-
-        $processor = new DestinationMatcher(new MatchScoreTargetSorter($targetRepository), $pageRepository);
+        $processor = $this->createProcessor($route, $targets, $page);
 
         $destination = new Destination($route, $items);
 
@@ -86,5 +75,54 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
                 throw $exception;
             }
         }
+    }
+
+    /**
+     * @expectedException \Bankiru\Seo\Exception\MatchingException
+     * @expectedExceptionMessage Destination does not match any target
+     */
+    public function testRouteMismatch()
+    {
+        $route        = '/test/';
+        $d1           = new TargetDefinition($route);
+        $page         = (new SeoPageBuilder())
+            ->setTitle('Test Page')
+            ->getSeoPage();
+        $invalidRoute = $route . '_invalid';
+
+        $processor = $this->createProcessor($route, [$d1], $page);
+
+        $this->targetRepo->findByRoute(Argument::exact($invalidRoute))->willReturn([]);
+
+        $destination = new Destination($invalidRoute, ['arg1' => 2, 'arg2' => 2]);
+
+        $processor->match($destination);
+    }
+
+    /**
+     * @param string           $route
+     * @param array            $targets
+     * @param SeoPageInterface $page
+     *
+     * @return DestinationMatcher
+     */
+    private function createProcessor($route, array $targets, $page)
+    {
+        $this->targetRepo = $targetRepository = $this->prophesize(TargetRepositoryInterface::class);
+        $targetRepository->findByRoute(Argument::exact($route))->willReturn($targets);
+        $targetRepository = $targetRepository->reveal();
+
+        $pageRepository = $this->prophesize(PageRepositoryInterface::class);
+        $pageRepository
+            ->getByTargetDestination(
+                Argument::type(TargetDefinitionInterface::class),
+                Argument::type(DestinationInterface::class)
+            )
+            ->willReturn($page);
+        $pageRepository = $pageRepository->reveal();
+
+        $processor = new DestinationMatcher(new MatchScoreTargetSorter($targetRepository), $pageRepository);
+
+        return $processor;
     }
 }
