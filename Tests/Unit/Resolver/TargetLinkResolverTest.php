@@ -1,6 +1,6 @@
 <?php
 
-namespace Bankiru\Seo\Tests\Unit;
+namespace Bankiru\Seo\Tests\Unit\Resolver;
 
 use Bankiru\Seo\Destination\CartesianDestinationGenerator;
 use Bankiru\Seo\Destination\Compiler\SymfonyRouterCompiler;
