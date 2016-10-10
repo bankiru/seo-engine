@@ -28,18 +28,16 @@ class TargetLinkResolverTest extends \PHPUnit_Framework_TestCase
         $target = new TargetDefinition($route);
 
         $registry = new SourceRegistry();
-        $registry->add(
-            'my_source',
-            new CollectionSource(
-                new ArrayCollection(
-                    [
-                        'quas',
-                        'wex',
-                        'exort',
-                    ]
-                )
+        $source   = new CollectionSource(
+            new ArrayCollection(
+                [
+                    'quas',
+                    'wex',
+                    'exort',
+                ]
             )
         );
+        $registry->add('my_source', $source);
 
         $normalizer = new DelegatingNormalizer([new ScalarNormalizer()]);
         $collection = new RouteCollection();
@@ -54,7 +52,7 @@ class TargetLinkResolverTest extends \PHPUnit_Framework_TestCase
         $filler = new CallbackFiller(
             ['source'],
             function ($items) {
-                return 'filled_' . array_shift($items);
+                return 'filled_'.array_shift($items);
             }
         );
 
@@ -69,6 +67,7 @@ class TargetLinkResolverTest extends \PHPUnit_Framework_TestCase
         /** @var LinkInterface[] $links */
         $links = $resolver->resolve($link);
 
+        self::assertEquals(3, $target->count(['source' => $source]));
         self::assertCount(3, $links);
         $res = [];
         foreach ($links as $compiledLink) {
