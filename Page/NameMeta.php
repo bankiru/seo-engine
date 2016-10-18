@@ -108,6 +108,6 @@ final class NameMeta
      */
     public static function revisit($days)
     {
-        return HtmlMeta::createNameMeta('url', $days);
+        return HtmlMeta::createNameMeta('revisit', $days);
     }
 }
