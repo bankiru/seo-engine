@@ -15,16 +15,16 @@ final class StaticPageRepository implements PageRepositoryInterface
 
     public function add(TargetDefinitionInterface $target, SeoPageInterface $page)
     {
-        $this->pages[$target->getRoute()] = $page;
+        $this->pages[spl_object_hash($target)] = $page;
     }
 
     /** {@inheritdoc} */
     public function getByTargetDestination(TargetDefinitionInterface $target, DestinationInterface $destination = null)
     {
-        if (!array_key_exists($target->getRoute(), $this->pages)) {
+        if (!array_key_exists(spl_object_hash($target), $this->pages)) {
             throw PageException::notFound($target);
         }
 
-        return $this->pages[$target->getRoute()];
+        return $this->pages[spl_object_hash($target)];
     }
 }
