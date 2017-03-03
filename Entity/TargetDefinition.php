@@ -36,8 +36,16 @@ class TargetDefinition implements TargetDefinitionInterface
             return null;
         }
 
+        $conditions = $this->conditions;
+        foreach ($destination as $code => $item)
+        {
+            if (!array_key_exists($code, $this->conditions)) {
+                $conditions[$code] = new PermissiveCondition();
+            }
+        }
+
         $result = 0;
-        foreach ($this->conditions as $code => $condition) {
+        foreach ($conditions as $code => $condition) {
             $payload = $destination->resolve($code);
             $score   = $condition->match($payload);
             if ($score === null) {

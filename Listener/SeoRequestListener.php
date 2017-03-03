@@ -4,6 +4,7 @@ namespace Bankiru\Seo\Listener;
 
 use Bankiru\Seo\Exception\MatchingException;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -13,7 +14,7 @@ final class SeoRequestListener
     /** @var RouterInterface */
     private $router;
     /**
-     * @var MasterSeoRequest
+     * @var SeoRequestInterface
      */
     private $seoRequest;
 
@@ -23,7 +24,7 @@ final class SeoRequestListener
      * @param RouterInterface  $router
      * @param MasterSeoRequest $seoRequest
      */
-    public function __construct(RouterInterface $router, MasterSeoRequest $seoRequest)
+    public function __construct(RouterInterface $router, SeoRequestInterface $seoRequest)
     {
         $this->router     = $router;
         $this->seoRequest = $seoRequest;
@@ -36,7 +37,7 @@ final class SeoRequestListener
      * @throws NotFoundHttpException
      * @throws \LogicException
      */
-    public function onMasterRequest(GetResponseEvent $event)
+    public function onMasterRequest(KernelEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
@@ -56,7 +57,12 @@ final class SeoRequestListener
             return;
         }
 
-        $this->seoRequest->setDestination(RequestDestinationFactory::createFromRequest($request));
+        $this->seoRequest->setDestination(
+            RequestDestinationFactory::createFromRequest(
+                $request,
+                $seoOptions['destination']
+            )
+        );
 
         if (false === $seoOptions['match']) {
             return;
@@ -93,6 +99,13 @@ final class SeoRequestListener
             );
         }
 
-        return array_replace_recursive(['enabled' => true, 'match' => true], $seoOptions);
+        return array_replace_recursive(
+            [
+                'enabled'     => true,
+                'match'       => true,
+                'destination' => [],
+            ],
+            $seoOptions
+        );
     }
 }

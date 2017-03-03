@@ -9,8 +9,8 @@ php:
 
 env:
   - SYMFONY_VERSION='2.8.*' deps='no'
-  - SYMFONY_VERSION='3.0.*' deps='no'
-  - SYMFONY_VERSION='3.1.*' deps='no'
+  - SYMFONY_VERSION='3.2.*' deps='no'
+  - SYMFONY_VERSION='~3.3@dev' deps='no'
 
 matrix:
     allow_failures:
