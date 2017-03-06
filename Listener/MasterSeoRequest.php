@@ -6,7 +6,7 @@ use Bankiru\Seo\DestinationInterface;
 use Bankiru\Seo\DestinationMatcherInterface;
 use Bankiru\Seo\Page\SeoPageInterface;
 
-final class MasterSeoRequest implements SeoRequestInterface
+class MasterSeoRequest implements SeoRequestInterface
 {
     /** @var  DestinationInterface */
     private $destination;
@@ -49,5 +49,10 @@ final class MasterSeoRequest implements SeoRequestInterface
         }
 
         return $this->page;
+    }
+
+    public function getRenderedPage()
+    {
+        return $this->getPage();
     }
 }

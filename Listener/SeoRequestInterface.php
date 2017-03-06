@@ -25,4 +25,11 @@ interface SeoRequestInterface
      * @throws MatchingException
      */
     public function getPage();
+
+    /**
+     * @return SeoPageInterface
+     * @throws \LogicException
+     * @throws MatchingException
+     */
+    public function getRenderedPage();
 }
