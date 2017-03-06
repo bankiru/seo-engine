@@ -88,10 +88,10 @@ final class SeoRequestListener
     {
         $seoOptions = $route->getOption('seo');
         if (null === $seoOptions) {
-            return ['enabled' => false];
+            return ['enabled' => false, 'match' => false, 'destination' => []];
         }
         if (is_bool($seoOptions)) {
-            return ['enabled' => $seoOptions, 'match' => true];
+            return ['enabled' => $seoOptions, 'match' => true, 'destination' => []];
         }
         if (!is_array($seoOptions)) {
             throw new \UnexpectedValueException(
