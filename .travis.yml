@@ -27,4 +27,4 @@ install:
 
 script:
   - mkdir -p build
-  - phpunit --colors -c phpunit.xml --coverage-text
+  - vendor/bin/phpunit --colors -c phpunit.xml --coverage-text
