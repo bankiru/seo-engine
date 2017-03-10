@@ -13,6 +13,6 @@ final class PermissiveCondition extends AbstractCondition
     /** {@inheritdoc} */
     protected function doMatch($object)
     {
-        return 1;
+        return 0;
     }
 }
