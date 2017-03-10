@@ -18,6 +18,7 @@ abstract class AbstractCondition implements ConditionInterface
      */
     protected $targetDefinition;
 
+    /** {@inheritdoc} */
     public function attach(TargetDefinitionInterface $target, $code)
     {
         $this->code             = $code;
@@ -25,6 +26,7 @@ abstract class AbstractCondition implements ConditionInterface
         $this->targetDefinition->setCondition($this->code, $this);
     }
 
+    /** {@inheritdoc} */
     public function match($object)
     {
         if (!$this->supports($object)) {
