@@ -2,14 +2,6 @@ services:
   bankiru.seo.source_registry:
     class: Bankiru\Seo\Resolver\SourceRegistry
 
-  bankiru.seo.target_repository:
-    class: Bankiru\Seo\TargetRepositoryInterface
-    synthetic: true
-
-  bankiru.seo.page_repository:
-    class: Bankiru\Seo\PageRepositoryInterface
-    synthetic: true
-
   bankiru.seo.destination_compiler:
     alias: bankiru.seo.destination_compiler.symfony_routing
 

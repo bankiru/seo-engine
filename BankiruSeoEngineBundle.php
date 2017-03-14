@@ -2,6 +2,7 @@
 
 namespace Bankiru\Seo;
 
+use Bankiru\Seo\DependencyInjection\BankiruSeoEngineExtension;
 use Bankiru\Seo\DependencyInjection\Compiler\LinkGeneratorPass;
 use Bankiru\Seo\DependencyInjection\Compiler\RouterPass;
 use Bankiru\Seo\DependencyInjection\Compiler\SeoSourcePass;
@@ -18,5 +19,10 @@ final class BankiruSeoEngineBundle extends Bundle
         $container->addCompilerPass(new LinkGeneratorPass());
         $container->addCompilerPass(new SlugNormalizerPass());
         $container->addCompilerPass(new RouterPass());
+    }
+
+    public function getContainerExtension()
+    {
+        return new BankiruSeoEngineExtension();
     }
 }
