@@ -15,6 +15,18 @@ services:
   bankiru.seo.target_sorter:
     alias: bankiru.seo.matching_score_target_sorter
 
+  bankiru.seo.static_page_repository:
+    class: Bankiru\Seo\Integration\Local\StaticPageRepository
+
+  bankiru.seo.static_target_repository:
+    class: Bankiru\Seo\Integration\Local\StaticTargetRepository
+
+  bankiru.seo.target_repository:
+    alias: bankiru.seo.static_target_repository
+
+  bankiru.seo.page_repository:
+    alias: bankiru.seo.static_page_repository
+
   bankiru.seo.matching_score_target_sorter:
     class: Bankiru\Seo\Target\MatchScoreTargetSorter
     arguments:

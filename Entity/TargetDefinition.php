@@ -16,7 +16,7 @@ class TargetDefinition implements TargetDefinitionInterface
      */
     protected $conditions;
     /** @var  string */
-    protected $route;
+    private $route;
 
     /**
      * TargetDefinition constructor.
@@ -39,7 +39,7 @@ class TargetDefinition implements TargetDefinitionInterface
         $conditions = $this->conditions->toArray();
         foreach ($destination as $code => $item) {
             if (!array_key_exists($code, $conditions)) {
-                $conditions[$code] = new PermissiveCondition();
+                $conditions[$code] = new PermissiveCondition($code, $this);
             }
         }
 
@@ -83,7 +83,7 @@ class TargetDefinition implements TargetDefinitionInterface
             return $this->conditions->get($code);
         }
 
-        return new PermissiveCondition();
+        return new PermissiveCondition($code, $this);
     }
 
     /**
