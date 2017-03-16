@@ -15,15 +15,15 @@ final class BankiruSeoEngineExtension extends Extension
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
 
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('seo.yml');
+
         if (isset($config['target_repository'])) {
             $container->setAlias('bankiru.seo.target_repository', $config['target_repository']);
         }
         if (isset($config['page_repository'])) {
             $container->setAlias('bankiru.seo.page_repository', $config['page_repository']);
         }
-
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('seo.yml');
     }
 
     public function getAlias()
