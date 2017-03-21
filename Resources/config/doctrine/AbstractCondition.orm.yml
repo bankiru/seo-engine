@@ -2,6 +2,3 @@ Bankiru\Seo\Entity\AbstractCondition:
   type: mappedSuperclass
   fields:
     code: { type: string }
-  manyToOne:
-    target:
-      targetEntity: Bankiru\Seo\TargetDefinitionInterface

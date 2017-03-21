@@ -16,7 +16,7 @@ abstract class AbstractCondition implements ConditionInterface
     /**
      * @var TargetDefinitionInterface
      */
-    private $target;
+    protected $target;
 
     /**
      * AbstractCondition constructor.
