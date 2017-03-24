@@ -3,8 +3,8 @@
 namespace Bankiru\Seo\Listener;
 
 use Bankiru\Seo\Exception\MatchingException;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\KernelEvent;
+use Symfony\Bundle\FrameworkBundle\Controller\RedirectController;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -21,8 +21,8 @@ final class SeoRequestListener
     /**
      * SeoRequestListener constructor.
      *
-     * @param RouterInterface  $router
-     * @param MasterSeoRequest $seoRequest
+     * @param RouterInterface     $router
+     * @param SeoRequestInterface $seoRequest
      */
     public function __construct(RouterInterface $router, SeoRequestInterface $seoRequest)
     {
@@ -31,15 +31,22 @@ final class SeoRequestListener
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param FilterControllerEvent $event
      *
      * @throws \UnexpectedValueException
      * @throws NotFoundHttpException
      * @throws \LogicException
      */
-    public function onMasterRequest(KernelEvent $event)
+    public function onMasterRequest(FilterControllerEvent $event)
     {
         if (!$event->isMasterRequest()) {
+            // do not resolve seo on subrequests
+            return;
+        }
+
+        $controller = $event->getController();
+        if (is_array($controller) && $controller[0] instanceof RedirectController) {
+            // do not resolve seo on redirects
             return;
         }
 
