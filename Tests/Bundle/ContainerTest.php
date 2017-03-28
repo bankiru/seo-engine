@@ -4,18 +4,11 @@ namespace Bankiru\Seo\Tests\Bundle;
 
 use Bankiru\Seo\Destination;
 use Bankiru\Seo\Entity\TargetDefinition;
-use Bankiru\Seo\Integration\Local\StaticPageRepository;
-use Bankiru\Seo\Integration\Local\StaticTargetRepository;
 use Bankiru\Seo\Page\SeoPageBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ContainerTest extends KernelTestCase
 {
-    protected static function getKernelClass()
-    {
-        return SeoKernel::class;
-    }
-
     public function testContainerBuilding()
     {
         static::bootKernel();
@@ -28,10 +21,8 @@ class ContainerTest extends KernelTestCase
         $destination = new Destination($route, []);
         $page        = (new SeoPageBuilder())->setTitle('Title')->getSeoPage();
 
-        $targetRepo = new StaticTargetRepository();
-        $pageRepo   = new StaticPageRepository();
-        $container->set('bankiru.seo.target_repository', $targetRepo);
-        $container->set('bankiru.seo.page_repository', $pageRepo);
+        $targetRepo = $container->get('bankiru.seo.target_repository');
+        $pageRepo   = $container->get('bankiru.seo.page_repository');
 
         $targetRepo->add($target);
         $pageRepo->add($target, $page);
@@ -40,5 +31,10 @@ class ContainerTest extends KernelTestCase
         self::assertSame($page, $matcher->match($destination));
 
         self::assertTrue($container->has('bankiru.seo.request_listener'));
+    }
+
+    protected static function getKernelClass()
+    {
+        return SeoKernel::class;
     }
 }

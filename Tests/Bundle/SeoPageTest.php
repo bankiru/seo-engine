@@ -3,20 +3,12 @@
 namespace Bankiru\Seo\Tests\Bundle;
 
 use Bankiru\Seo\Entity\TargetDefinition;
-use Bankiru\Seo\Exception\MatchingException;
-use Bankiru\Seo\Integration\Local\StaticPageRepository;
-use Bankiru\Seo\Integration\Local\StaticTargetRepository;
 use Bankiru\Seo\Page\SeoPageBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SeoPageTest extends WebTestCase
 {
-    protected static function getKernelClass()
-    {
-        return SeoKernel::class;
-    }
-
     public function getRoutes()
     {
         return [
@@ -41,10 +33,8 @@ class SeoPageTest extends WebTestCase
         $target = new TargetDefinition($route);
         $page   = (new SeoPageBuilder())->setTitle('Title')->getSeoPage();
 
-        $targetRepo = new StaticTargetRepository();
-        $pageRepo   = new StaticPageRepository();
-        $container->set('bankiru.seo.target_repository', $targetRepo);
-        $container->set('bankiru.seo.page_repository', $pageRepo);
+        $targetRepo = $container->get('bankiru.seo.target_repository');
+        $pageRepo   = $container->get('bankiru.seo.page_repository');
 
         $targetRepo->add($target);
         $pageRepo->add($target, $page);
@@ -63,6 +53,11 @@ class SeoPageTest extends WebTestCase
                 throw $exception;
             }
         }
+    }
+
+    protected static function getKernelClass()
+    {
+        return SeoKernel::class;
     }
 
     protected function setUp()

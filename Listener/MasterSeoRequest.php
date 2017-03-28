@@ -4,10 +4,9 @@ namespace Bankiru\Seo\Listener;
 
 use Bankiru\Seo\DestinationInterface;
 use Bankiru\Seo\DestinationMatcherInterface;
-use Bankiru\Seo\Exception\MatchingException;
 use Bankiru\Seo\Page\SeoPageInterface;
 
-final class MasterSeoRequest
+class MasterSeoRequest implements SeoRequestInterface
 {
     /** @var  DestinationInterface */
     private $destination;
@@ -26,11 +25,7 @@ final class MasterSeoRequest
         $this->matcher = $matcher;
     }
 
-
-    /**
-     * @return DestinationInterface
-     * @throws \LogicException
-     */
+    /** {@inheritdoc} */
     public function getDestination()
     {
         if (null === $this->destination) {
@@ -40,19 +35,13 @@ final class MasterSeoRequest
         return $this->destination;
     }
 
-    /**
-     * @param DestinationInterface $destination
-     */
+    /** {@inheritdoc} */
     public function setDestination(DestinationInterface $destination)
     {
         $this->destination = $destination;
     }
 
-    /**
-     * @return SeoPageInterface
-     * @throws \LogicException
-     * @throws MatchingException
-     */
+    /** {@inheritdoc} */
     public function getPage()
     {
         if (null === $this->page) {
@@ -60,5 +49,10 @@ final class MasterSeoRequest
         }
 
         return $this->page;
+    }
+
+    public function getRenderedPage()
+    {
+        return $this->getPage();
     }
 }

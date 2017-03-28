@@ -13,7 +13,7 @@ interface ConditionInterface
     /**
      * @param mixed $object
      *
-     * @return float
+     * @return float|null
      */
     public function match($object);
 }

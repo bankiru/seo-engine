@@ -1,0 +1,4 @@
+Bankiru\Seo\Entity\TargetDefinition:
+  type: mappedSuperclass
+  fields:
+    route: { type: string }

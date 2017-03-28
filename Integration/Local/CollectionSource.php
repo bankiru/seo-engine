@@ -50,7 +50,7 @@ final class CollectionSource implements \IteratorAggregate, SourceInterface
             new \IteratorIterator($this->collection->getIterator()),
             function ($element) {
                 foreach ($this->conditions as $condition) {
-                    if (!$condition->match($element)) {
+                    if (null === $condition->match($element)) {
                         return false;
                     }
                 }

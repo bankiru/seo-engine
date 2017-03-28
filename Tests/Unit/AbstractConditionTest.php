@@ -12,9 +12,13 @@ class AbstractConditionTest extends \PHPUnit_Framework_TestCase
     {
         /** @var ConditionInterface|\PHPUnit_Framework_MockObject_MockObject $condition */
         $condition = $this
-            ->getMockForAbstractClass(AbstractCondition::class);
+            ->getMockBuilder(AbstractCondition::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['supports', 'doMatch'])
+            ->getMock();
 
         $condition->method('supports')->withAnyParameters()->willReturn(false);
+        $condition->method('doMatch')->withAnyParameters()->willThrowException(new \Exception());
 
         try {
             self::assertFalse($condition->match(new \stdClass()));

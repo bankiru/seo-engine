@@ -2,8 +2,8 @@
 
 namespace Bankiru\Seo\Entity;
 
-use Bankiru\Seo\Exception\ConditionException;
 use Bankiru\Seo\ConditionInterface;
+use Bankiru\Seo\Exception\ConditionException;
 use Bankiru\Seo\TargetDefinitionInterface;
 
 abstract class AbstractCondition implements ConditionInterface
@@ -11,20 +11,34 @@ abstract class AbstractCondition implements ConditionInterface
     /**
      * @var string
      */
-    protected $code;
+    private $code;
 
     /**
      * @var TargetDefinitionInterface
      */
-    protected $targetDefinition;
+    protected $target;
 
-    public function attach(TargetDefinitionInterface $target, $code)
+    /**
+     * AbstractCondition constructor.
+     *
+     * @param string                    $code
+     * @param TargetDefinitionInterface $target
+     */
+    public function __construct($code, TargetDefinitionInterface $target)
     {
-        $this->code             = $code;
-        $this->targetDefinition = $target;
-        $this->targetDefinition->setCondition($this->code, $this);
+        $this->code   = $code;
+        $this->target = $target;
     }
 
+    /** {@inheritdoc} */
+    public function attach(TargetDefinitionInterface $target, $code)
+    {
+        $this->code   = $code;
+        $this->target = $target;
+        $this->target->setCondition($this->code, $this);
+    }
+
+    /** {@inheritdoc} */
     public function match($object)
     {
         if (!$this->supports($object)) {
@@ -32,6 +46,22 @@ abstract class AbstractCondition implements ConditionInterface
         }
 
         return $this->doMatch($object);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @return TargetDefinitionInterface
+     */
+    public function getTarget()
+    {
+        return $this->target;
     }
 
     /**

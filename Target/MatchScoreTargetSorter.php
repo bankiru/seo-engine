@@ -36,7 +36,7 @@ final class MatchScoreTargetSorter implements TargetSorter
             throw MatchingException::noTarget();
         }
 
-        ksort($sorted, SORT_DESC);
+        krsort($sorted);
 
         return array_shift($sorted);
     }

@@ -5,4 +5,4 @@ services:
     - "@router"
     - "@bankiru.seo.master_seo_request"
     tags:
-    - { name: kernel.event_listener, event: kernel.request, method: onMasterRequest, priority: -1000 }
+    - { name: kernel.event_listener, event: kernel.controller, method: onMasterRequest, priority: -256 }

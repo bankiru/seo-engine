@@ -3,7 +3,8 @@
 namespace Bankiru\Seo\Listener;
 
 use Bankiru\Seo\Exception\MatchingException;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Bundle\FrameworkBundle\Controller\RedirectController;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -13,32 +14,39 @@ final class SeoRequestListener
     /** @var RouterInterface */
     private $router;
     /**
-     * @var MasterSeoRequest
+     * @var SeoRequestInterface
      */
     private $seoRequest;
 
     /**
      * SeoRequestListener constructor.
      *
-     * @param RouterInterface  $router
-     * @param MasterSeoRequest $seoRequest
+     * @param RouterInterface     $router
+     * @param SeoRequestInterface $seoRequest
      */
-    public function __construct(RouterInterface $router, MasterSeoRequest $seoRequest)
+    public function __construct(RouterInterface $router, SeoRequestInterface $seoRequest)
     {
         $this->router     = $router;
         $this->seoRequest = $seoRequest;
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param FilterControllerEvent $event
      *
      * @throws \UnexpectedValueException
      * @throws NotFoundHttpException
      * @throws \LogicException
      */
-    public function onMasterRequest(GetResponseEvent $event)
+    public function onMasterRequest(FilterControllerEvent $event)
     {
         if (!$event->isMasterRequest()) {
+            // do not resolve seo on subrequests
+            return;
+        }
+
+        $controller = $event->getController();
+        if (is_array($controller) && $controller[0] instanceof RedirectController) {
+            // do not resolve seo on redirects
             return;
         }
 
@@ -56,7 +64,12 @@ final class SeoRequestListener
             return;
         }
 
-        $this->seoRequest->setDestination(RequestDestinationFactory::createFromRequest($request));
+        $this->seoRequest->setDestination(
+            RequestDestinationFactory::createFromRequest(
+                $request,
+                $seoOptions['destination']
+            )
+        );
 
         if (false === $seoOptions['match']) {
             return;
@@ -82,10 +95,10 @@ final class SeoRequestListener
     {
         $seoOptions = $route->getOption('seo');
         if (null === $seoOptions) {
-            return ['enabled' => false];
+            return ['enabled' => false, 'match' => false, 'destination' => []];
         }
         if (is_bool($seoOptions)) {
-            return ['enabled' => $seoOptions, 'match' => true];
+            return ['enabled' => $seoOptions, 'match' => true, 'destination' => []];
         }
         if (!is_array($seoOptions)) {
             throw new \UnexpectedValueException(
@@ -93,6 +106,13 @@ final class SeoRequestListener
             );
         }
 
-        return array_replace_recursive(['enabled' => true, 'match' => true], $seoOptions);
+        return array_replace_recursive(
+            [
+                'enabled'     => true,
+                'match'       => true,
+                'destination' => [],
+            ],
+            $seoOptions
+        );
     }
 }
