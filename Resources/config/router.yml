@@ -2,7 +2,6 @@ services:
   bankiru.seo.request_listener:
     class: Bankiru\Seo\Listener\SeoRequestListener
     arguments:
-    - "@router"
     - "@bankiru.seo.master_seo_request"
     tags:
     - { name: kernel.event_listener, event: kernel.controller, method: onMasterRequest, priority: -256 }

@@ -51,9 +51,9 @@ final class SeoKernel extends Kernel
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
         $seoRoute = $routes->add('/test/match', 'kernel:eventAction', 'event_controller_match');
-        $seoRoute->setOption('seo', true);
+        $seoRoute->setDefault('_seo_options', true);
         $seoRoute = $routes->add('/test/no_match', 'kernel:eventAction', 'event_controller_no_match');
-        $seoRoute->setOption('seo', true);
+        $seoRoute->setDefault('_seo_options', true);
         $routes->add('/test/no_seo', 'kernel:eventAction', 'event_controller_no_seo');
     }
 

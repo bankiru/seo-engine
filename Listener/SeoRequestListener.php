@@ -6,13 +6,9 @@ use Bankiru\Seo\Exception\MatchingException;
 use Symfony\Bundle\FrameworkBundle\Controller\RedirectController;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouterInterface;
 
 final class SeoRequestListener
 {
-    /** @var RouterInterface */
-    private $router;
     /**
      * @var SeoRequestInterface
      */
@@ -21,12 +17,11 @@ final class SeoRequestListener
     /**
      * SeoRequestListener constructor.
      *
-     * @param RouterInterface     $router
      * @param SeoRequestInterface $seoRequest
      */
-    public function __construct(RouterInterface $router, SeoRequestInterface $seoRequest)
+    public function __construct(SeoRequestInterface $seoRequest)
     {
-        $this->router     = $router;
+
         $this->seoRequest = $seoRequest;
     }
 
@@ -52,14 +47,8 @@ final class SeoRequestListener
 
         $request = $event->getRequest();
 
-        $name  = $request->attributes->get('_route');
-        $route = $this->router->getRouteCollection()->get($name);
-        if (!$route) {
-            return;
-        }
-
-        $seoOptions = $this->normalizeSeoOptions($route, $name);
-
+        $options    = $request->attributes->get('_seo_options', false);
+        $seoOptions = $this->normalizeSeoOptions($options);
         if (true !== $seoOptions['enabled']) {
             return;
         }
@@ -85,25 +74,21 @@ final class SeoRequestListener
     }
 
     /**
-     * @param Route  $route
-     * @param string $name
+     * @param mixed $options
      *
      * @return array
      * @throws \UnexpectedValueException
      */
-    private function normalizeSeoOptions(Route $route, $name)
+    private function normalizeSeoOptions($options)
     {
-        $seoOptions = $route->getOption('seo');
-        if (null === $seoOptions) {
+        if (null === $options) {
             return ['enabled' => false, 'match' => false, 'destination' => []];
         }
-        if (is_bool($seoOptions)) {
-            return ['enabled' => $seoOptions, 'match' => true, 'destination' => []];
+        if (is_bool($options)) {
+            return ['enabled' => $options, 'match' => true, 'destination' => []];
         }
-        if (!is_array($seoOptions)) {
-            throw new \UnexpectedValueException(
-                sprintf('Seo options should be either boolean or array for route "%s"', $name)
-            );
+        if (!is_array($options)) {
+            throw new \UnexpectedValueException('Seo options should be boolean, null or array');
         }
 
         return array_replace_recursive(
@@ -112,7 +97,7 @@ final class SeoRequestListener
                 'match'       => true,
                 'destination' => [],
             ],
-            $seoOptions
+            $options
         );
     }
 }
