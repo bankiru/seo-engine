@@ -1,0 +1,5 @@
+Bankiru\Seo\Entity\IdentifiableSetCondition:
+  type: mappedSuperclass
+  fields:
+    alias: { type: string }
+    mode: { type: string }

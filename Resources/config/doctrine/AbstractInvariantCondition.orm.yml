@@ -1,0 +1,2 @@
+Bankiru\Seo\Entity\AbstractInvariantCondition:
+  type: mappedSuperclass
