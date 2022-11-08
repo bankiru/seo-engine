@@ -38,5 +38,6 @@
   "suggest": {
     "symfony/symfony": "To use as a bundle",
     "twig/twig": "To render links twig templates"
-  }
+  },
+  "abandoned": true
 }
